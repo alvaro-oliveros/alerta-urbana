@@ -4,7 +4,7 @@ A comprehensive community security monitoring application that enables real-time
 
 ## 🚀 Live Demo
 
-**Try the interactive demo:** [View Demo](https://yourusername.github.io/repository-name)
+**Try the interactive demo:** [View Demo](https://alvaro-oliveros.github.io/alerta-urbana/)
 
 **Demo Credentials:**
 - Email: `demo@alertaurbana.com`
@@ -59,14 +59,15 @@ A comprehensive community security monitoring application that enables real-time
 ## 📂 Project Structure
 
 ```
-alerta_urbana/
-├── alerta_urbana.html    # Main application file
-├── cameras/              # Security camera images
-│   ├── 1.jpg            # Storage area camera
-│   ├── 2.jpg            # Night vision driveway
-│   └── 3.jpg            # Residential parking
-├── README.md            # Project documentation
-└── demo-setup.md        # Demo presentation guide
+alerta-urbana/
+├── index.html           # Main application file
+├── index.md             # Redirect file for GitHub Pages
+├── cameras/             # Security camera images
+│   ├── 1.jpg           # Storage area camera
+│   ├── 2.jpg           # Night vision driveway
+│   └── 3.jpg           # Residential parking
+├── README.md           # Project documentation
+└── demo-setup.md       # Demo presentation guide
 ```
 
 ## 🚀 Getting Started
@@ -74,8 +75,8 @@ alerta_urbana/
 ### Local Development
 1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/repository-name.git
-cd repository-name
+git clone https://github.com/alvaro-oliveros/alerta-urbana.git
+cd alerta-urbana
 ```
 
 2. Serve locally
@@ -96,7 +97,7 @@ npx http-server
 2. Navigate to Pages section
 3. Select "Deploy from a branch"
 4. Choose "main" branch
-5. Your app will be live at: `https://yourusername.github.io/repository-name`
+5. Your app will be live at: `https://alvaro-oliveros.github.io/alerta-urbana/`
 
 ## 💡 Demo Instructions
 
