@@ -380,6 +380,153 @@
             transform: none;
         }
 
+        /* Photo upload styles */
+        .photo-controls {
+            margin-top: 10px;
+        }
+
+        .photo-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .photo-btn {
+            flex: 1;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .photo-btn:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+
+        .photo-btn:active {
+            transform: translateY(0);
+        }
+
+        .camera-btn {
+            background: #10b981;
+        }
+
+        .camera-btn:hover {
+            background: #059669;
+        }
+
+        .photo-preview {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .photo-preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .photo-count {
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .clear-photos-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .clear-photos-btn:hover {
+            background: #dc2626;
+        }
+
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+        }
+
+        .photo-item {
+            position: relative;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .photo-item:hover {
+            transform: scale(1.02);
+        }
+
+        .photo-item img {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .photo-remove {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .photo-remove:hover {
+            background: #dc2626;
+        }
+
+        .photo-info {
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .photo-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100px;
+            background: #f3f4f6;
+            border-radius: 8px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
         .filter-btn {
             background: #f3f4f6;
             color: #6b7280;
@@ -1185,7 +1332,7 @@
                         <div style="background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 15px; border-radius: 12px; margin-top: 20px; text-align: center;">
                             <div style="font-size: 16px; font-weight: 600; margin-bottom: 5px;">🚀 DEMO INTERACTIVO</div>
                             <div style="font-size: 12px; opacity: 0.9;">Explora todas las funciones de seguridad</div>
-                            <div style="font-size: 10px; margin-top: 8px; opacity: 0.8;">Credenciales: demo@alertaurbana.com / demo123</div>
+                            <div style="font-size: 10px; margin-top: 8px; opacity: 0.8;">Credenciales: demo / demo</div>
                         </div>
                     </div>
                 </div>
@@ -1291,6 +1438,33 @@
                     <div class="form-group">
                         <label class="form-label">Descripción del incidente</label>
                         <textarea class="form-textarea" id="descriptionInput" placeholder="Describe lo que observaste de manera clara y objetiva..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Evidencia fotográfica (opcional)</label>
+                        <div class="photo-controls">
+                            <div class="photo-buttons">
+                                <button type="button" class="photo-btn camera-btn" id="takePhotoBtn">📷 Tomar Foto</button>
+                                <button type="button" class="photo-btn upload-btn" id="uploadPhotoBtn">📁 Subir Foto</button>
+                            </div>
+                            <input type="file" id="photoInput" accept="image/*" capture="environment" style="display: none;">
+                            <input type="file" id="uploadInput" accept="image/*" multiple style="display: none;">
+                        </div>
+                        
+                        <!-- Photo preview area -->
+                        <div id="photoPreview" class="photo-preview" style="display: none;">
+                            <div class="photo-preview-header">
+                                <span class="photo-count">0 fotos seleccionadas</span>
+                                <button type="button" class="clear-photos-btn" id="clearPhotosBtn">🗑️ Limpiar</button>
+                            </div>
+                            <div class="photo-grid" id="photoGrid"></div>
+                        </div>
+                        
+                        <div class="photo-info">
+                            <span style="font-size: 11px; color: #6b7280;">
+                                📸 Máximo 5 fotos • Hasta 5MB cada una • JPG, PNG
+                            </span>
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -1748,7 +1922,7 @@
                 return;
             }
 
-            if (email === 'demo@alertaurbana.com' && password === 'demo123') {
+            if (email === 'demo' && password === 'demo') {
                 alert('¡Login exitoso!');
                 // Hide login screen
                 document.getElementById('login').classList.remove('active');
@@ -1759,7 +1933,7 @@
                 // Setup event listeners after login
                 setupEventListeners();
             } else {
-                alert('Credenciales incorrectas.\n\nUsa:\nEmail: demo@alertaurbana.com\nPassword: demo123');
+                alert('Credenciales incorrectas.\n\nUsa:\nEmail: demo\nPassword: demo');
             }
         }
 
@@ -1995,9 +2169,143 @@
             }
         }
 
+        // Photo management
+        var selectedPhotos = [];
+        var maxPhotos = 5;
+        var maxFileSize = 5 * 1024 * 1024; // 5MB
+
+        // Función para configurar listeners de fotos
+        function setupPhotoListeners() {
+            const takePhotoBtn = document.getElementById('takePhotoBtn');
+            const uploadPhotoBtn = document.getElementById('uploadPhotoBtn');
+            const photoInput = document.getElementById('photoInput');
+            const uploadInput = document.getElementById('uploadInput');
+
+            if (takePhotoBtn) {
+                takePhotoBtn.addEventListener('click', handlePhotoCapture);
+            }
+
+            if (uploadPhotoBtn) {
+                uploadPhotoBtn.addEventListener('click', () => uploadInput.click());
+            }
+
+            if (photoInput) {
+                photoInput.addEventListener('change', (e) => processFiles(e.target.files));
+            }
+
+            if (uploadInput) {
+                uploadInput.addEventListener('change', (e) => processFiles(e.target.files));
+            }
+        }
+
+        // Función para manejar captura de foto
+        function handlePhotoCapture() {
+            if (selectedPhotos.length >= maxPhotos) {
+                alert(`Máximo ${maxPhotos} fotos permitidas`);
+                return;
+            }
+
+            const photoInput = document.getElementById('photoInput');
+            if (photoInput) {
+                photoInput.click();
+            }
+        }
+
+        // Función para procesar archivos seleccionados
+        function processFiles(files) {
+            for (let file of files) {
+                if (selectedPhotos.length >= maxPhotos) {
+                    alert(`Máximo ${maxPhotos} fotos permitidas`);
+                    break;
+                }
+
+                if (validatePhoto(file)) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const photoData = {
+                            id: Date.now() + Math.random(),
+                            file: file,
+                            dataUrl: e.target.result,
+                            name: file.name,
+                            size: file.size
+                        };
+                        selectedPhotos.push(photoData);
+                        updatePhotoPreview();
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+        }
+
+        // Función para validar fotos
+        function validatePhoto(file) {
+            if (!file.type.startsWith('image/')) {
+                alert('Solo se permiten archivos de imagen');
+                return false;
+            }
+
+            if (file.size > maxFileSize) {
+                alert(`La imagen debe ser menor a ${maxFileSize / (1024 * 1024)}MB`);
+                return false;
+            }
+
+            return true;
+        }
+
+        // Función para actualizar preview de fotos
+        function updatePhotoPreview() {
+            const container = document.querySelector('.photo-controls');
+            if (!container) return;
+            
+            let previewContainer = container.querySelector('.photo-preview');
+            
+            if (!previewContainer) {
+                previewContainer = document.createElement('div');
+                previewContainer.className = 'photo-preview';
+                container.appendChild(previewContainer);
+            }
+
+            previewContainer.innerHTML = '';
+
+            selectedPhotos.forEach((photo, index) => {
+                const photoDiv = document.createElement('div');
+                photoDiv.className = 'photo-item';
+                photoDiv.innerHTML = `
+                    <img src="${photo.dataUrl}" alt="Foto ${index + 1}">
+                    <div class="photo-info">
+                        <span class="photo-name">${photo.name}</span>
+                        <span class="photo-size">${(photo.size / 1024).toFixed(1)}KB</span>
+                    </div>
+                    <button type="button" class="photo-remove" onclick="removePhoto(${photo.id})">×</button>
+                `;
+                previewContainer.appendChild(photoDiv);
+            });
+
+            // Actualizar contador
+            const photoButtons = container.querySelector('.photo-buttons');
+            if (photoButtons) {
+                let counter = photoButtons.querySelector('.photo-counter');
+                if (!counter) {
+                    counter = document.createElement('span');
+                    counter.className = 'photo-counter';
+                    photoButtons.appendChild(counter);
+                }
+                counter.textContent = `${selectedPhotos.length}/${maxPhotos} fotos`;
+            }
+        }
+
+        // Función para remover foto
+        function removePhoto(photoId) {
+            selectedPhotos = selectedPhotos.filter(photo => photo.id !== photoId);
+            updatePhotoPreview();
+        }
+
         // Setup event listeners after login
         function setupEventListeners() {
             console.log('Setting up event listeners...');
+            
+            // Photo upload event listeners
+            setupPhotoListeners();
             
             // Navigation tabs
             document.querySelectorAll('.nav-tab').forEach(function(tab) {
@@ -2099,12 +2407,12 @@
                 return;
             }
 
-            if (email === 'demo@alertaurbana.com' && password === 'demo123') {
+            if (email === 'demo' && password === 'demo') {
                 alert('¡Login exitoso!');
                 isLoggedIn = true;
                 window.showDashboard();
             } else {
-                alert('Credenciales incorrectas.\n\nUsa:\nEmail: demo@alertaurbana.com\nPassword: demo123');
+                alert('Credenciales incorrectas.\n\nUsa:\nEmail: demo\nPassword: demo');
             }
         };
 
@@ -2285,6 +2593,10 @@
                     document.getElementById('locationInput').value = '';
                     document.getElementById('descriptionInput').value = '';
                     
+                    // Limpiar fotos seleccionadas
+                    selectedPhotos = [];
+                    updatePhotoPreview();
+                    
                     showScreen('dashboard');
                 }, 1500);
             }, 2000);
@@ -2391,10 +2703,10 @@
             // Simular autenticación
             setTimeout(() => {
                 // Demo user credentials
-                if (email === 'demo@alertaurbana.com' && password === 'demo123') {
+                if (email === 'demo' && password === 'demo') {
                     currentUser = {
                         name: 'Juan Pérez',
-                        email: 'demo@alertaurbana.com',
+                        email: 'demo',
                         phone: '+1 234 567 8900',
                         address: 'Calle 123, Colonia Centro',
                         verified: true,
@@ -2429,7 +2741,7 @@
                         document.getElementById('rememberMe').checked = false;
                     }, 1500);
                 } else {
-                    alert('Credenciales incorrectas. Usa:\nEmail: demo@alertaurbana.com\nContraseña: demo123');
+                    alert('Credenciales incorrectas. Usa:\nEmail: demo\nContraseña: demo');
                     
                     loginBtn.textContent = originalText;
                     loginBtn.disabled = false;
@@ -2812,6 +3124,7 @@ Acciones disponibles:
         window.handleLogin = handleLogin;
         window.handleRegister = handleRegister;
         window.showScreen = showScreen;
+        window.removePhoto = removePhoto;
 
         // Inicializar la aplicación
         document.addEventListener('DOMContentLoaded', function() {

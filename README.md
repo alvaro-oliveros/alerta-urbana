@@ -7,8 +7,8 @@ A comprehensive community security monitoring application that enables real-time
 **Try the interactive demo:** [View Demo](https://alvaro-oliveros.github.io/alerta-urbana/)
 
 **Demo Credentials:**
-- Email: `demo@alertaurbana.com`
-- Password: `demo123`
+- Email: `demo`
+- Password: `demo`
 
 ## ✨ Features
 

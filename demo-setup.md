@@ -25,8 +25,8 @@ npx http-server
 ```
 
 ## Demo Credentials
-- **Email:** demo@alertaurbana.com
-- **Password:** demo123
+- **Email:** demo
+- **Password:** demo
 
 ## QR Code Generation
 1. Use qr-code-generator.com
@@ -62,7 +62,7 @@ npx http-server
 ## Demo Script
 
 1. **"Please scan the QR code and open the app"**
-2. **"Login with: demo@alertaurbana.com / demo123"**
+2. **"Login with: demo / demo"**
 3. **"You're now in the dashboard - this is what residents see"**
 4. **"Tap the camera icon - see live security feeds"**
 5. **"Tap emergency - immediate access to help"**
