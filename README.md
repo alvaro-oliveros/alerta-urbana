@@ -137,7 +137,7 @@ The app includes demo data and simulated functionality. For production deploymen
 
 ## 🤝 Contributing
 
-This is a demo project created for presentation purposes. For questions or suggestions, please contact [your-email@example.com].
+This is a demo project created for presentation purposes. For questions or suggestions, please contact [alvaro.oliveros@utec.edu.pe](mailto:alvaro.oliveros@utec.edu.pe).
 
 ## 📄 License
 
