@@ -223,6 +223,24 @@
                 padding-bottom: calc(85px + env(safe-area-inset-bottom));
                 margin-top: 0;
             }
+
+            /* Keyboard handling for mobile */
+            body.keyboard-open .status-bar {
+                position: absolute;
+            }
+            
+            body.keyboard-open .nav-tabs {
+                position: absolute;
+            }
+            
+            body.keyboard-open .header {
+                margin-top: 0;
+            }
+            
+            body.keyboard-open .content {
+                padding-top: 20px;
+                padding-bottom: 20px;
+            }
         }
 
         .quick-actions {
@@ -3693,6 +3711,39 @@ Acciones disponibles:
                     }
                 }
             }, 500);
+
+            // Mobile keyboard handling
+            let initialViewportHeight = window.innerHeight;
+            
+            function handleKeyboardToggle() {
+                const currentHeight = window.innerHeight;
+                const heightDifference = initialViewportHeight - currentHeight;
+                
+                // If viewport height decreased significantly, keyboard is open
+                if (heightDifference > 150) {
+                    document.body.classList.add('keyboard-open');
+                } else {
+                    document.body.classList.remove('keyboard-open');
+                }
+            }
+
+            // Listen for viewport changes (keyboard open/close)
+            window.addEventListener('resize', handleKeyboardToggle);
+            
+            // Also listen for input focus/blur events
+            document.addEventListener('focusin', function(e) {
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                    setTimeout(() => {
+                        handleKeyboardToggle();
+                    }, 300);
+                }
+            });
+            
+            document.addEventListener('focusout', function() {
+                setTimeout(() => {
+                    handleKeyboardToggle();
+                }, 300);
+            });
         });
 </body>
 </html>
