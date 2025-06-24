@@ -3046,22 +3046,38 @@
 
         // Función para grabar audio
         function toggleRecording() {
+            console.log('toggleRecording called, isRecording:', isRecording);
+            
             const audioBtn = document.getElementById('recordBtn');
             const audioTime = document.getElementById('audioTime');
             
+            console.log('audioBtn:', audioBtn);
+            console.log('audioTime:', audioTime);
+            
             if (!audioBtn || !audioTime) {
-                console.error('Audio elements not found');
+                console.error('Audio elements not found - audioBtn:', audioBtn, 'audioTime:', audioTime);
+                alert('Error: No se encontraron los elementos de grabación');
                 return;
             }
             
             if (!isRecording) {
                 // Start recording
+                console.log('Starting recording...');
                 isRecording = true;
                 recordingTime = 0;
+                
+                console.log('Changing button appearance...');
                 audioBtn.textContent = '⏹️';
-                audioBtn.style.background = '#ef4444';
-                audioBtn.style.transform = 'scale(1.1)';
-                audioBtn.style.boxShadow = '0 0 10px rgba(239, 68, 68, 0.5)';
+                audioBtn.style.setProperty('background', '#ef4444', 'important');
+                audioBtn.style.setProperty('transform', 'scale(1.1)', 'important');
+                audioBtn.style.setProperty('box-shadow', '0 0 10px rgba(239, 68, 68, 0.5)', 'important');
+                
+                console.log('Button styles applied:', {
+                    background: audioBtn.style.background,
+                    transform: audioBtn.style.transform,
+                    boxShadow: audioBtn.style.boxShadow,
+                    textContent: audioBtn.textContent
+                });
                 
                 console.log('Started recording simulation');
                 
@@ -3075,11 +3091,12 @@
                 }, 1000);
             } else {
                 // Stop recording
+                console.log('Stopping recording...');
                 isRecording = false;
                 audioBtn.textContent = '🎤';
-                audioBtn.style.background = '#3b82f6';
-                audioBtn.style.transform = 'scale(1)';
-                audioBtn.style.boxShadow = 'none';
+                audioBtn.style.setProperty('background', '#3b82f6', 'important');
+                audioBtn.style.setProperty('transform', 'scale(1)', 'important');
+                audioBtn.style.setProperty('box-shadow', 'none', 'important');
                 audioTime.style.color = '#6b7280';
                 audioTime.style.fontWeight = 'normal';
                 clearInterval(recordingInterval);
