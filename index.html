@@ -314,9 +314,24 @@
         }
 
         .alert-item.acknowledged {
-            opacity: 0.6;
-            background: #f9fafb;
-            border-left-color: #9ca3af;
+            opacity: 0.6 !important;
+            background: #f9fafb !important;
+            border-left-color: #9ca3af !important;
+        }
+
+        .alert-item[data-severity].acknowledged {
+            opacity: 0.6 !important;
+            background: #f9fafb !important;
+            border-left-color: #9ca3af !important;
+            filter: grayscale(30%) !important;
+        }
+
+        .alert-item.force-acknowledged {
+            opacity: 0.6 !important;
+            background: #f9fafb !important;
+            background-color: #f9fafb !important;
+            border-left-color: #9ca3af !important;
+            filter: grayscale(50%) !important;
         }
 
         .alert-severity {
@@ -1726,17 +1741,61 @@
                     <p>Monitoreo y gestión de incidentes</p>
                 </div>
                 <div class="content">
-                    <!-- Filtros de alertas -->
+                    <!-- Búsqueda y filtros de alertas -->
                     <div style="background: white; border-radius: 12px; padding: 15px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.08);">
-                        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-                            <button class="filter-btn active" data-filter="all" onclick="filterAlerts('all')">Todas</button>
-                            <button class="filter-btn" data-filter="high" onclick="filterAlerts('high')">🔴 Alta</button>
-                            <button class="filter-btn" data-filter="medium" onclick="filterAlerts('medium')">🟡 Media</button>
-                            <button class="filter-btn" data-filter="low" onclick="filterAlerts('low')">🟢 Baja</button>
+                        <!-- Barra de búsqueda -->
+                        <div style="margin-bottom: 15px;">
+                            <div style="position: relative;">
+                                <input 
+                                    type="text" 
+                                    id="alertSearch" 
+                                    placeholder="🔍 Buscar alertas..." 
+                                    style="width: 100%; padding: 12px 40px 12px 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 14px; background: #f9fafb;"
+                                    onkeyup="searchAlerts(this.value)"
+                                >
+                                <button 
+                                    id="clearSearchBtn"
+                                    style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #6b7280; cursor: pointer; display: none;"
+                                    onclick="clearSearch()"
+                                >✕</button>
+                            </div>
                         </div>
-                        <div style="display: flex; gap: 10px;">
-                            <button class="filter-btn" data-filter="pending" onclick="filterAlerts('pending')">Pendientes</button>
-                            <button class="filter-btn" data-filter="acknowledged" onclick="filterAlerts('acknowledged')">Atendidas</button>
+
+                        <!-- Filtros por severidad -->
+                        <div style="margin-bottom: 10px;">
+                            <label style="font-size: 12px; font-weight: 600; color: #6b7280; margin-bottom: 8px; display: block;">SEVERIDAD</label>
+                            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                <button class="filter-btn active" data-filter="all" data-type="severity" onclick="filterAlerts('all', 'severity')">Todas</button>
+                                <button class="filter-btn" data-filter="high" data-type="severity" onclick="filterAlerts('high', 'severity')">🔴 Crítica</button>
+                                <button class="filter-btn" data-filter="medium" data-type="severity" onclick="filterAlerts('medium', 'severity')">🟡 Media</button>
+                                <button class="filter-btn" data-filter="low" data-type="severity" onclick="filterAlerts('low', 'severity')">🟢 Baja</button>
+                            </div>
+                        </div>
+
+                        <!-- Filtros por estado -->
+                        <div style="margin-bottom: 10px;">
+                            <label style="font-size: 12px; font-weight: 600; color: #6b7280; margin-bottom: 8px; display: block;">ESTADO</label>
+                            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                <button class="filter-btn active" data-filter="all" data-type="status" onclick="filterAlerts('all', 'status')">Todas</button>
+                                <button class="filter-btn" data-filter="pending" data-type="status" onclick="filterAlerts('pending', 'status')">⏳ Pendientes</button>
+                                <button class="filter-btn" data-filter="acknowledged" data-type="status" onclick="filterAlerts('acknowledged', 'status')">✅ Atendidas</button>
+                            </div>
+                        </div>
+
+                        <!-- Filtro rápido por tiempo -->
+                        <div>
+                            <label style="font-size: 12px; font-weight: 600; color: #6b7280; margin-bottom: 8px; display: block;">TIEMPO</label>
+                            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                <button class="filter-btn active" data-filter="all" data-type="time" onclick="filterAlerts('all', 'time')">Todo</button>
+                                <button class="filter-btn" data-filter="hour" data-type="time" onclick="filterAlerts('hour', 'time')">🕐 Última hora</button>
+                                <button class="filter-btn" data-filter="today" data-type="time" onclick="filterAlerts('today', 'time')">📅 Hoy</button>
+                                <button class="filter-btn" data-filter="week" data-type="time" onclick="filterAlerts('week', 'time')">📆 Esta semana</button>
+                            </div>
+                        </div>
+
+                        <!-- Contador de resultados -->
+                        <div id="alertsCounter" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e5e7eb; font-size: 12px; color: #6b7280; text-align: center;">
+                            Mostrando <span id="alertsCount">6</span> de <span id="totalAlerts">6</span> alertas
                         </div>
                     </div>
 
@@ -1838,6 +1897,22 @@
                                 <button class="alert-btn" onclick="viewAlertDetails('alert5')" style="background: #6b7280; margin-top: 4px;">👁️</button>
                             </div>
                         </div>
+
+                        <div class="alert-item" data-severity="low" data-status="pending">
+                            <div class="alert-info">
+                                <h3>Mantenimiento Programado</h3>
+                                <p>Sistema de cámaras - Zona A</p>
+                                <div style="display: flex; gap: 8px; margin-top: 5px;">
+                                    <div class="alert-severity low">🟢 BAJA</div>
+                                    <span style="font-size: 10px; color: #6b7280;">ayer</span>
+                                </div>
+                            </div>
+                            <div class="alert-actions">
+                                <div class="alert-time">14:30</div>
+                                <button class="alert-btn" onclick="acknowledgeAlert('alert6')">✓</button>
+                                <button class="alert-btn" onclick="viewAlertDetails('alert6')" style="background: #3b82f6; margin-top: 4px;">👁️</button>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Estadísticas de alertas -->
@@ -1909,6 +1984,245 @@
     <!-- Test script -->
     <script>
         console.log('Test script loading...');
+
+        // ALERT FILTER FUNCTIONS - DEFINED FIRST FOR IMMEDIATE ACCESS
+        var currentFilters = {
+            severity: 'all',
+            status: 'all',
+            time: 'all',
+            search: ''
+        };
+
+        function filterAlerts(filter, type) {
+            console.log('filterAlerts called with:', filter, type);
+            if (!type) type = 'severity';
+            
+            currentFilters[type] = filter;
+            
+            // Update button states
+            var buttons = document.querySelectorAll('[data-type="' + type + '"]');
+            for (var i = 0; i < buttons.length; i++) {
+                buttons[i].classList.remove('active');
+            }
+            
+            var activeBtn = document.querySelector('[data-filter="' + filter + '"][data-type="' + type + '"]');
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+            }
+            
+            // Apply filters
+            var alertItems = document.querySelectorAll('#alertsList .alert-item');
+            var visibleCount = 0;
+            
+            for (var i = 0; i < alertItems.length; i++) {
+                var item = alertItems[i];
+                var show = true;
+                
+                if (currentFilters.severity !== 'all') {
+                    show = show && item.getAttribute('data-severity') === currentFilters.severity;
+                }
+                
+                if (currentFilters.status !== 'all') {
+                    var itemStatus = item.getAttribute('data-status');
+                    show = show && itemStatus === currentFilters.status;
+                    
+                    // Debug logging for problematic alerts
+                    if (item.querySelector('h3').textContent.includes('Movimiento') || item.querySelector('h3').textContent.includes('Vehículo')) {
+                        console.log('Filter debug - Alert:', item.querySelector('h3').textContent, 'Status:', itemStatus, 'Expected:', currentFilters.status, 'Show:', show);
+                        console.log('Filter debug - Element modified by acknowledge:', item.getAttribute('data-modified-by-acknowledge'));
+                        console.log('Filter debug - DOM pointer:', item);
+                    }
+                }
+                
+                // Time filtering
+                if (currentFilters.time !== 'all') {
+                    var timeSpans = item.querySelectorAll('span');
+                    var timeText = '';
+                    console.log('Checking spans for alert:', item.querySelector('h3').textContent);
+                    
+                    for (var j = 0; j < timeSpans.length; j++) {
+                        var span = timeSpans[j];
+                        console.log('  Span', j, 'content:', '"' + span.textContent + '"');
+                        if (span.textContent.includes('min') || span.textContent.includes('h') || span.textContent.includes('ayer')) {
+                            timeText = span.textContent.toLowerCase();
+                            console.log('  Found time span:', '"' + timeText + '"');
+                            break;
+                        }
+                    }
+                    
+                    console.log('Time filter - Alert:', item.querySelector('h3').textContent, 'Time text:', '"' + timeText + '"', 'Filter:', currentFilters.time);
+                    
+                    switch(currentFilters.time) {
+                        case 'hour':
+                            // Only show alerts from the last hour (under 60 minutes)
+                            var isWithinHour = false;
+                            
+                            // More specific pattern matching for hour indicators
+                            // Look for patterns like "1h", "2h", etc. (number followed by h)
+                            var hasHours = timeText.match(/\d+h/) || timeText.includes(' h ') || timeText.includes('h ');
+                            console.log('  Checking time:', '"' + timeText + '"', 'includes min?', timeText.includes('min'), 'has hours?', hasHours);
+                            
+                            if (timeText.includes('min') && !hasHours) {
+                                // Pure minutes like "hace 2 min", "hace 12 min" - these are within the hour
+                                isWithinHour = true;
+                                console.log('  Pure minutes - Setting isWithinHour = true');
+                            } else if (hasHours) {
+                                // Anything with hours ("hace 1h", "hace 1h 15min", "hace 3h") is over 1 hour
+                                isWithinHour = false;
+                                console.log('  Has hours - Setting isWithinHour = false');
+                            }
+                            
+                            show = show && isWithinHour;
+                            console.log('Hour filter result for "' + timeText + '":', isWithinHour);
+                            break;
+                        case 'today':
+                            show = show && !timeText.includes('ayer');
+                            break;
+                        case 'week':
+                            // Don't override other filters - just allow all times
+                            // show = true; // REMOVED - this was breaking combination filters
+                            break;
+                    }
+                }
+                
+                if (currentFilters.search) {
+                    var title = item.querySelector('h3').textContent.toLowerCase();
+                    var desc = item.querySelector('p').textContent.toLowerCase();
+                    show = show && (title.includes(currentFilters.search) || desc.includes(currentFilters.search));
+                }
+                
+                item.style.display = show ? 'flex' : 'none';
+                if (show) visibleCount++;
+            }
+            
+            // Update counter
+            var countEl = document.getElementById('alertsCount');
+            var totalEl = document.getElementById('totalAlerts');
+            if (countEl) countEl.textContent = visibleCount;
+            if (totalEl) totalEl.textContent = alertItems.length;
+            
+            console.log('Filter applied. Showing', visibleCount, 'of', alertItems.length, 'alerts');
+        }
+
+        function acknowledgeAlert(alertId) {
+            console.log('acknowledgeAlert called with:', alertId);
+            
+            // Find the acknowledge button ONLY within the alerts screen to avoid duplicates
+            var alertBtn = document.querySelector('#alerts [onclick="acknowledgeAlert(\'' + alertId + '\')"]');
+            if (!alertBtn) {
+                alertBtn = document.querySelector('#alerts [onclick*="acknowledgeAlert(\'' + alertId + '\')"]');
+            }
+            
+            if (!alertBtn) {
+                console.error('Button not found for alert:', alertId);
+                return;
+            }
+            
+            var alertItem = alertBtn.closest('.alert-item');
+            if (!alertItem) {
+                console.error('Alert item not found');
+                return;
+            }
+            
+            // Check if already acknowledged
+            if (alertBtn.classList.contains('acknowledged')) {
+                console.log('Alert already acknowledged');
+                return;
+            }
+            
+            console.log('Found alert item for styling:', alertItem);
+            console.log('Alert item ID/classes before:', alertItem.className, alertItem.id);
+            console.log('Alert item DOM pointer:', alertItem);
+            
+            // Add a unique identifier to track this specific element
+            alertItem.setAttribute('data-modified-by-acknowledge', 'true');
+            
+            // Mark as acknowledged
+            alertItem.classList.add('acknowledged');
+            alertItem.setAttribute('data-status', 'acknowledged');
+            alertBtn.classList.add('acknowledged');
+            
+            // Use DOM replacement method that works for problematic alerts
+            var originalHTML = alertItem.innerHTML;
+            
+            // Temporarily replace with acknowledged version
+            var tempDiv = document.createElement('div');
+            tempDiv.innerHTML = originalHTML;
+            
+            // Modify the content to show acknowledged state
+            var h3 = tempDiv.querySelector('h3');
+            if (h3 && !h3.textContent.includes('✅')) {
+                h3.textContent = '✅ ' + h3.textContent;
+            }
+            
+            // Replace the content and apply acknowledged styling
+            alertItem.innerHTML = tempDiv.innerHTML;
+            alertItem.style.cssText = 'opacity: 0.6 !important; background: #f9fafb !important; background-color: #f9fafb !important; background-image: none !important; border-left: 4px solid #9ca3af !important; filter: grayscale(50%) !important; transform: scale(0.98) !important;';
+            
+            // Force browser repaint
+            alertItem.offsetHeight;
+            
+            console.log('Styling applied. Alert item classes after:', alertItem.className);
+            console.log('Alert item style attribute:', alertItem.getAttribute('style'));
+            
+            // Title already updated above via DOM replacement
+            
+            // Disable and style the button
+            alertBtn.onclick = null;
+            alertBtn.style.background = '#9ca3af';
+            alertBtn.style.cursor = 'default';
+            alertBtn.removeAttribute('title');
+            
+            var title = alertItem.querySelector('h3').textContent;
+            alert('✅ Alerta reconocida: ' + title);
+            
+            // Also update the corresponding dashboard alert copy
+            var dashboardAlerts = document.querySelectorAll('#dashboard [onclick*="' + alertId + '"]');
+            dashboardAlerts.forEach(function(dashBtn) {
+                var dashAlertItem = dashBtn.closest('.alert-item');
+                if (dashAlertItem) {
+                    dashAlertItem.classList.add('acknowledged');
+                    dashAlertItem.setAttribute('data-status', 'acknowledged');
+                    dashAlertItem.style.cssText = 'opacity: 0.6 !important; background: #f9fafb !important; filter: grayscale(50%) !important;';
+                    
+                    // Update dashboard title
+                    var dashH3 = dashAlertItem.querySelector('h3');
+                    if (dashH3 && !dashH3.textContent.includes('✅')) {
+                        dashH3.textContent = '✅ ' + dashH3.textContent;
+                    }
+                    
+                    // Disable dashboard button
+                    dashBtn.style.background = '#9ca3af';
+                    dashBtn.onclick = null;
+                    
+                    console.log('Dashboard alert also updated for:', alertId);
+                }
+            });
+            
+            // Reapply filters to update counts
+            if (window.filterAlerts && typeof currentFilters !== 'undefined') {
+                filterAlerts(currentFilters.severity, 'severity');
+            }
+            
+            console.log('Alert acknowledged successfully for:', alertId);
+        }
+
+        function searchAlerts(term) {
+            currentFilters.search = term.toLowerCase();
+            filterAlerts(currentFilters.severity, 'severity');
+        }
+
+        function clearSearch() {
+            document.getElementById('alertSearch').value = '';
+            currentFilters.search = '';
+            filterAlerts(currentFilters.severity, 'severity');
+        }
+
+        // Make functions global immediately
+        window.filterAlerts = filterAlerts;
+        window.acknowledgeAlert = acknowledgeAlert;
+        window.searchAlerts = searchAlerts;
+        window.clearSearch = clearSearch;
         
         function handleLoginSimple() {
             console.log('Login function called');
@@ -2101,24 +2415,6 @@
         }
 
         // Alert functions
-        function acknowledgeAlert(alertId) {
-            console.log('Acknowledging alert:', alertId);
-            var alertElement = document.querySelector('[onclick*="' + alertId + '"]');
-            if (alertElement) {
-                alertElement = alertElement.closest('.alert-item');
-                var alertBtn = alertElement.querySelector('.alert-btn');
-                
-                if (alertBtn && !alertBtn.classList.contains('acknowledged')) {
-                    alertElement.classList.add('acknowledged');
-                    alertElement.setAttribute('data-status', 'acknowledged');
-                    alertBtn.classList.add('acknowledged');
-                    alertBtn.onclick = null;
-                    
-                    var alertTitle = alertElement.querySelector('h3').textContent;
-                    alert('Alerta reconocida: ' + alertTitle);
-                }
-            }
-        }
 
         // Profile functions
         function editProfile() {
@@ -2926,34 +3222,54 @@
 
         // Función para reconocer alertas
         function acknowledgeAlert(alertId) {
-            const alertElement = document.querySelector(`[onclick*="${alertId}"]`).closest('.alert-item');
-            const alertBtn = alertElement.querySelector('.alert-btn');
+            console.log('acknowledgeAlert called:', alertId);
             
+            // Buscar el elemento de alerta
+            var alertElement = document.querySelector('[onclick*="' + alertId + '"]');
+            if (!alertElement) {
+                console.error('Alert element not found for:', alertId);
+                alert('Error: No se encontró la alerta');
+                return;
+            }
+            
+            var alertItem = alertElement.closest('.alert-item');
+            if (!alertItem) {
+                console.error('Alert item not found');
+                return;
+            }
+            
+            var alertBtn = alertItem.querySelector('.alert-btn');
+            if (!alertBtn) {
+                console.error('Alert button not found');
+                return;
+            }
+            
+            // Si ya está reconocida, no hacer nada
             if (alertBtn.classList.contains('acknowledged')) {
-                return; // Ya está reconocida
+                console.log('Alert already acknowledged');
+                return;
             }
             
             // Marcar como reconocida visualmente
-            alertElement.classList.add('acknowledged');
-            alertElement.setAttribute('data-status', 'acknowledged');
+            alertItem.classList.add('acknowledged');
+            alertItem.setAttribute('data-status', 'acknowledged');
             alertBtn.classList.add('acknowledged');
             alertBtn.onclick = null;
             
-            // Actualizar datos
-            const alert = alertsData.find(a => a.id === alertId);
-            if (alert) {
-                alert.status = 'acknowledged';
+            // Mostrar confirmación
+            var alertTitle = alertItem.querySelector('h3').textContent;
+            alert('✅ Alerta reconocida: ' + alertTitle);
+            
+            // Actualizar filtros si existen
+            if (window.applyAllFilters) {
+                window.applyAllFilters();
             }
             
-            // Mostrar confirmación
-            const alertTitle = alertElement.querySelector('h3').textContent;
-            
-            // Simular notificación push
-            showNotification(`Alerta reconocida: ${alertTitle}`);
-            
-            // Actualizar contadores
-            updateAlertCounters();
+            console.log('Alert acknowledged successfully');
         }
+
+        // Hacer función global inmediatamente
+        window.acknowledgeAlert = acknowledgeAlert;
 
         // Función para ver detalles de alerta
         function viewAlertDetails(alertId) {
@@ -2980,44 +3296,143 @@ Acciones disponibles:
             alert(details);
         }
 
+        // Variables globales para manejo de filtros y búsqueda
+        var currentFilters = {
+            severity: 'all',
+            status: 'all',
+            time: 'all',
+            search: ''
+        };
+
         // Función para filtrar alertas
-        function filterAlerts(filter) {
-            // Actualizar botones de filtro
-            document.querySelectorAll('.filter-btn').forEach(btn => {
+        function filterAlerts(filter, type) {
+            console.log('filterAlerts called:', filter, type);
+            
+            if (!type) type = 'severity'; // default value
+            
+            // Actualizar filtro actual
+            currentFilters[type] = filter;
+            
+            // Actualizar botones de filtro del tipo específico
+            var buttons = document.querySelectorAll('[data-type="' + type + '"]');
+            buttons.forEach(function(btn) {
                 btn.classList.remove('active');
             });
-            document.querySelector(`[data-filter="${filter}"]`).classList.add('active');
             
-            // Filtrar alertas
-            const alertItems = document.querySelectorAll('#alertsList .alert-item');
+            var activeBtn = document.querySelector('[data-filter="' + filter + '"][data-type="' + type + '"]');
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+            }
             
-            alertItems.forEach(item => {
-                let show = false;
+            // Aplicar todos los filtros
+            applyAllFilters();
+        }
+
+        function searchAlerts(searchTerm) {
+            currentFilters.search = searchTerm.toLowerCase();
+            
+            // Mostrar/ocultar botón de limpiar búsqueda
+            var clearBtn = document.getElementById('clearSearchBtn');
+            if (clearBtn) {
+                clearBtn.style.display = searchTerm ? 'block' : 'none';
+            }
+            
+            applyAllFilters();
+        }
+
+        function clearSearch() {
+            var searchInput = document.getElementById('alertSearch');
+            if (searchInput) {
+                searchInput.value = '';
+            }
+            currentFilters.search = '';
+            var clearBtn = document.getElementById('clearSearchBtn');
+            if (clearBtn) {
+                clearBtn.style.display = 'none';
+            }
+            applyAllFilters();
+        }
+
+        function applyAllFilters() {
+            var alertItems = document.querySelectorAll('#alertsList .alert-item');
+            var visibleCount = 0;
+            
+            alertItems.forEach(function(item) {
+                var show = true;
                 
-                switch(filter) {
-                    case 'all':
-                        show = true;
-                        break;
-                    case 'high':
-                        show = item.getAttribute('data-severity') === 'high';
-                        break;
-                    case 'medium':
-                        show = item.getAttribute('data-severity') === 'medium';
-                        break;
-                    case 'low':
-                        show = item.getAttribute('data-severity') === 'low';
-                        break;
-                    case 'pending':
-                        show = item.getAttribute('data-status') === 'pending';
-                        break;
-                    case 'acknowledged':
-                        show = item.getAttribute('data-status') === 'acknowledged';
-                        break;
+                // Filtro por severidad
+                if (currentFilters.severity !== 'all') {
+                    show = show && item.getAttribute('data-severity') === currentFilters.severity;
+                }
+                
+                // Filtro por estado
+                if (currentFilters.status !== 'all') {
+                    show = show && item.getAttribute('data-status') === currentFilters.status;
+                }
+                
+                // Filtro por tiempo
+                if (currentFilters.time !== 'all') {
+                    var timeElements = item.querySelectorAll('span');
+                    var timeText = '';
+                    for (var i = 0; i < timeElements.length; i++) {
+                        var el = timeElements[i];
+                        if (el.textContent.includes('min') || el.textContent.includes('h')) {
+                            timeText = el.textContent;
+                            break;
+                        }
+                    }
+                    
+                    switch(currentFilters.time) {
+                        case 'hour':
+                            show = show && (timeText.includes('min') || timeText.includes('hace 1h'));
+                            break;
+                        case 'today':
+                            show = show && (timeText.includes('min') || timeText.includes('h'));
+                            break;
+                        case 'week':
+                            show = true; // Para el demo, mostramos todo como "esta semana"
+                            break;
+                    }
+                }
+                
+                // Filtro por búsqueda
+                if (currentFilters.search) {
+                    var title = item.querySelector('h3').textContent.toLowerCase();
+                    var description = item.querySelector('p').textContent.toLowerCase();
+                    show = show && (title.includes(currentFilters.search) || description.includes(currentFilters.search));
                 }
                 
                 item.style.display = show ? 'flex' : 'none';
+                if (show) visibleCount++;
             });
+            
+            // Actualizar contador
+            updateAlertsCounter(visibleCount, alertItems.length);
         }
+
+        function updateAlertsCounter(visible, total) {
+            var alertsCount = document.getElementById('alertsCount');
+            var totalAlerts = document.getElementById('totalAlerts');
+            var counter = document.getElementById('alertsCounter');
+            
+            if (alertsCount) alertsCount.textContent = visible;
+            if (totalAlerts) totalAlerts.textContent = total;
+            
+            if (counter) {
+                if (visible === total) {
+                    counter.style.color = '#6b7280';
+                } else {
+                    counter.style.color = '#3b82f6';
+                }
+            }
+        }
+
+        // Hacer funciones globales inmediatamente
+        window.filterAlerts = filterAlerts;
+        window.searchAlerts = searchAlerts;
+        window.clearSearch = clearSearch;
+        window.applyAllFilters = applyAllFilters;
+        window.updateAlertsCounter = updateAlertsCounter;
 
         // Función para mostrar notificaciones
         function showNotification(message) {
@@ -3125,6 +3540,7 @@ Acciones disponibles:
         window.handleRegister = handleRegister;
         window.showScreen = showScreen;
         window.removePhoto = removePhoto;
+        // Functions already assigned to window above
 
         // Inicializar la aplicación
         document.addEventListener('DOMContentLoaded', function() {
@@ -3201,6 +3617,16 @@ Acciones disponibles:
             if (submitBtn) {
                 submitBtn.addEventListener('click', submitReport);
             }
+            
+            // Inicializar contador de alertas cuando la página esté lista
+            setTimeout(() => {
+                if (document.getElementById('alertsList')) {
+                    const totalAlerts = document.querySelectorAll('#alertsList .alert-item').length;
+                    if (window.updateAlertsCounter) {
+                        window.updateAlertsCounter(totalAlerts, totalAlerts);
+                    }
+                }
+            }, 500);
         });
 </body>
 </html>
