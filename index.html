@@ -222,7 +222,36 @@
                 padding-top: calc(44px + env(safe-area-inset-top));
                 padding-bottom: calc(85px + env(safe-area-inset-bottom));
                 margin-top: 0;
+                /* Safari-specific fix for bottom content visibility */
+                margin-bottom: calc(20px + env(safe-area-inset-bottom));
             }
+        }
+
+        /* Safari-specific fixes */
+        @supports (-webkit-touch-callout: none) {
+            @media (max-width: 768px) {
+                .content {
+                    padding-bottom: calc(100px + env(safe-area-inset-bottom));
+                    margin-bottom: calc(30px + env(safe-area-inset-bottom));
+                }
+                
+                .nav-tabs {
+                    padding: 12px 0 calc(20px + env(safe-area-inset-bottom));
+                }
+            }
+        }
+
+        /* Additional Safari-specific targeting */
+        @media (max-width: 768px) {
+            body.safari-browser .content {
+                padding-bottom: calc(110px + env(safe-area-inset-bottom)) !important;
+                margin-bottom: calc(40px + env(safe-area-inset-bottom)) !important;
+            }
+            
+            body.safari-browser .nav-tabs {
+                padding: 15px 0 calc(25px + env(safe-area-inset-bottom)) !important;
+            }
+        }
 
             /* Keyboard handling for mobile */
             body.keyboard-open {
@@ -269,6 +298,17 @@
                 padding-top: 20px;
                 padding-bottom: 20px;
                 flex: none;
+            }
+
+            /* Safari-specific keyboard mode fixes */
+            body.safari-keyboard .content {
+                padding-bottom: 40px;
+                margin-bottom: 40px;
+            }
+            
+            body.safari-keyboard .nav-tabs {
+                margin-top: 40px;
+                padding: 12px 0 calc(30px + env(safe-area-inset-bottom));
             }
         }
 
@@ -3758,12 +3798,22 @@ Acciones disponibles:
 
             // Mobile keyboard handling with Visual Viewport API
             let isKeyboardOpen = false;
+            const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+            console.log('Browser detection - Safari:', isSafari, 'User Agent:', navigator.userAgent);
+            
+            // Add Safari class to body for CSS targeting
+            if (isSafari) {
+                document.body.classList.add('safari-browser');
+            }
             
             function handleKeyboardOpen() {
                 if (!isKeyboardOpen) {
                     isKeyboardOpen = true;
                     document.body.classList.add('keyboard-open');
-                    console.log('Keyboard opened - switching to scroll layout');
+                    if (isSafari) {
+                        document.body.classList.add('safari-keyboard');
+                    }
+                    console.log('Keyboard opened - switching to scroll layout (Safari:', isSafari, ')');
                 }
             }
             
@@ -3771,12 +3821,13 @@ Acciones disponibles:
                 if (isKeyboardOpen) {
                     isKeyboardOpen = false;
                     document.body.classList.remove('keyboard-open');
+                    document.body.classList.remove('safari-keyboard');
                     console.log('Keyboard closed - switching to fixed layout');
                     
-                    // Scroll to top to ensure proper positioning
+                    // Scroll to top to ensure proper positioning, with longer delay for Safari
                     setTimeout(() => {
                         window.scrollTo(0, 0);
-                    }, 100);
+                    }, isSafari ? 300 : 100);
                 }
             }
 
