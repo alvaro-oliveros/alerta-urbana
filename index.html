@@ -331,6 +331,31 @@
             .phone-container {
                 width: 450px; /* Wider to accommodate 2x2 grid properly */
             }
+            
+            /* Force grid layout on desktop with maximum specificity */
+            #dashboard .content .quick-actions {
+                display: grid !important;
+                grid-template-columns: 1fr 1fr !important;
+                grid-template-rows: 1fr 1fr !important;
+                gap: 15px !important;
+                width: 100% !important;
+            }
+            
+            #dashboard .content .quick-actions .action-card {
+                width: auto !important;
+                max-width: none !important;
+                min-width: 0 !important;
+            }
+            
+            /* Debug: highlight the grid container on desktop */
+            #dashboard .content .quick-actions {
+                border: 2px solid red !important;
+                background: rgba(255, 0, 0, 0.1) !important;
+            }
+            
+            #dashboard .content .quick-actions .action-card {
+                border: 1px solid blue !important;
+            }
         }
 
         /* Ensure quick-actions stays 2x2 on mobile */
