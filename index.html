@@ -326,6 +326,13 @@
             margin-bottom: 20px;
         }
 
+        /* Desktop: ensure phone container is wide enough for 2x2 grid */
+        @media (min-width: 769px) {
+            .phone-container {
+                width: 450px; /* Wider to accommodate 2x2 grid properly */
+            }
+        }
+
         /* Ensure quick-actions stays 2x2 on mobile */
         @media (max-width: 768px) {
             .quick-actions {
