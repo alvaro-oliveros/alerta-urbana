@@ -1692,13 +1692,13 @@
                     <div class="form-group">
                         <label class="form-label">Grabación de audio (opcional)</label>
                         <div class="audio-controls">
-                            <button class="audio-btn" id="recordBtn">🎤</button>
+                            <button class="audio-btn" id="recordBtn" onclick="toggleRecording()">🎤</button>
                             <span id="audioTime">00:00</span>
                             <span style="font-size: 12px; color: #6b7280;">Presiona para grabar</span>
                         </div>
                     </div>
 
-                    <button class="submit-btn" id="submitReportBtn">📤 Enviar Reporte</button>
+                    <button class="submit-btn" id="submitReportBtn" onclick="submitReport()">📤 Enviar Reporte</button>
                 </div>
             </div>
 
@@ -3093,6 +3093,9 @@
             }
         }
 
+        // Make recording function global
+        window.toggleRecording = toggleRecording;
+
         // Función para enviar reporte
         function submitReport() {
             const camera = document.getElementById('cameraSelect').value;
@@ -3157,6 +3160,13 @@
                 }, 1500);
             }, 2000);
         }
+
+        // Make submit function global
+        window.submitReport = submitReport;
+        
+        // Test functions are working
+        console.log('submitReport function defined:', typeof window.submitReport);
+        console.log('toggleRecording function defined:', typeof window.toggleRecording);
 
         // Funciones de emergencia
         function emergencyCall(type) {
