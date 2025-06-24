@@ -225,12 +225,40 @@
             }
 
             /* Keyboard handling for mobile */
+            body.keyboard-open {
+                height: auto;
+                overflow: auto;
+            }
+            
+            body.keyboard-open .phone-container {
+                height: auto;
+                min-height: 100vh;
+            }
+            
+            body.keyboard-open .phone-screen {
+                height: auto;
+                min-height: 100vh;
+            }
+            
+            body.keyboard-open .screen {
+                position: relative;
+                height: auto;
+                min-height: 100vh;
+            }
+            
             body.keyboard-open .status-bar {
-                position: absolute;
+                position: relative;
+                padding-top: env(safe-area-inset-top);
+                height: calc(44px + env(safe-area-inset-top));
             }
             
             body.keyboard-open .nav-tabs {
-                position: absolute;
+                position: relative;
+                bottom: auto;
+                left: auto;
+                right: auto;
+                margin-top: 20px;
+                padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
             }
             
             body.keyboard-open .header {
@@ -240,6 +268,7 @@
             body.keyboard-open .content {
                 padding-top: 20px;
                 padding-bottom: 20px;
+                flex: none;
             }
         }
 
@@ -2321,7 +2350,17 @@
             }
 
             if (email === 'demo' && password === 'demo') {
+                // Remove keyboard-open class and ensure proper layout
+                document.body.classList.remove('keyboard-open');
+                
+                // Blur any focused inputs to close keyboard
+                document.activeElement.blur();
+                
+                // Scroll to top
+                window.scrollTo(0, 0);
+                
                 alert('¡Login exitoso!');
+                
                 // Hide login screen
                 document.getElementById('login').classList.remove('active');
                 // Show dashboard
@@ -2330,6 +2369,11 @@
                 document.getElementById('mainNavigation').style.display = 'flex';
                 // Setup event listeners after login
                 setupEventListeners();
+                
+                // Ensure proper layout after login
+                setTimeout(() => {
+                    window.scrollTo(0, 0);
+                }, 100);
             } else {
                 alert('Credenciales incorrectas.\n\nUsa:\nEmail: demo\nPassword: demo');
             }
@@ -3712,37 +3756,69 @@ Acciones disponibles:
                 }
             }, 500);
 
-            // Mobile keyboard handling
-            let initialViewportHeight = window.innerHeight;
+            // Mobile keyboard handling with Visual Viewport API
+            let isKeyboardOpen = false;
             
-            function handleKeyboardToggle() {
-                const currentHeight = window.innerHeight;
-                const heightDifference = initialViewportHeight - currentHeight;
-                
-                // If viewport height decreased significantly, keyboard is open
-                if (heightDifference > 150) {
+            function handleKeyboardOpen() {
+                if (!isKeyboardOpen) {
+                    isKeyboardOpen = true;
                     document.body.classList.add('keyboard-open');
-                } else {
+                    console.log('Keyboard opened - switching to scroll layout');
+                }
+            }
+            
+            function handleKeyboardClose() {
+                if (isKeyboardOpen) {
+                    isKeyboardOpen = false;
                     document.body.classList.remove('keyboard-open');
+                    console.log('Keyboard closed - switching to fixed layout');
+                    
+                    // Scroll to top to ensure proper positioning
+                    setTimeout(() => {
+                        window.scrollTo(0, 0);
+                    }, 100);
                 }
             }
 
-            // Listen for viewport changes (keyboard open/close)
-            window.addEventListener('resize', handleKeyboardToggle);
+            // Use Visual Viewport API if available (better for iOS)
+            if (window.visualViewport) {
+                window.visualViewport.addEventListener('resize', () => {
+                    const heightDiff = window.innerHeight - window.visualViewport.height;
+                    if (heightDiff > 100) {
+                        handleKeyboardOpen();
+                    } else {
+                        handleKeyboardClose();
+                    }
+                });
+            }
             
-            // Also listen for input focus/blur events
+            // Fallback for older browsers
+            let initialHeight = window.innerHeight;
+            window.addEventListener('resize', () => {
+                const currentHeight = window.innerHeight;
+                const heightDiff = initialHeight - currentHeight;
+                if (heightDiff > 150) {
+                    handleKeyboardOpen();
+                } else {
+                    handleKeyboardClose();
+                }
+            });
+            
+            // Input focus/blur events as additional triggers
             document.addEventListener('focusin', function(e) {
-                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
-                    setTimeout(() => {
-                        handleKeyboardToggle();
-                    }, 300);
+                if (e.target.type === 'email' || e.target.type === 'password' || e.target.type === 'text' || e.target.tagName === 'TEXTAREA') {
+                    setTimeout(handleKeyboardOpen, 300);
                 }
             });
             
             document.addEventListener('focusout', function() {
+                // Only close if no other input is focused
                 setTimeout(() => {
-                    handleKeyboardToggle();
-                }, 300);
+                    const activeElement = document.activeElement;
+                    if (!activeElement || (activeElement.tagName !== 'INPUT' && activeElement.tagName !== 'TEXTAREA')) {
+                        handleKeyboardClose();
+                    }
+                }, 100);
             });
         });
 </body>
