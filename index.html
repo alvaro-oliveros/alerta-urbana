@@ -2425,11 +2425,161 @@
             filterAlerts(currentFilters.severity, 'severity');
         }
 
+        // Recording variables for voice recording
+        var isRecording = false;
+        var recordingTime = 0;
+        var recordingInterval;
+
+        // Voice recording function
+        function toggleRecording() {
+            console.log('toggleRecording called, isRecording:', isRecording);
+            
+            const audioBtn = document.getElementById('recordBtn');
+            const audioTime = document.getElementById('audioTime');
+            
+            console.log('audioBtn:', audioBtn);
+            console.log('audioTime:', audioTime);
+            
+            if (!audioBtn || !audioTime) {
+                console.error('Audio elements not found - audioBtn:', audioBtn, 'audioTime:', audioTime);
+                alert('Error: No se encontraron los elementos de grabación');
+                return;
+            }
+            
+            if (!isRecording) {
+                // Start recording
+                console.log('Starting recording...');
+                isRecording = true;
+                recordingTime = 0;
+                
+                console.log('Changing button appearance...');
+                audioBtn.textContent = '⏹️';
+                audioBtn.style.setProperty('background', '#ef4444', 'important');
+                audioBtn.style.setProperty('transform', 'scale(1.1)', 'important');
+                audioBtn.style.setProperty('box-shadow', '0 0 10px rgba(239, 68, 68, 0.5)', 'important');
+                
+                console.log('Button styles applied:', {
+                    background: audioBtn.style.background,
+                    transform: audioBtn.style.transform,
+                    boxShadow: audioBtn.style.boxShadow,
+                    textContent: audioBtn.textContent
+                });
+                
+                console.log('Started recording simulation');
+                
+                recordingInterval = setInterval(() => {
+                    recordingTime++;
+                    const minutes = Math.floor(recordingTime / 60);
+                    const seconds = recordingTime % 60;
+                    audioTime.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                    audioTime.style.color = '#ef4444';
+                    audioTime.style.fontWeight = 'bold';
+                }, 1000);
+            } else {
+                // Stop recording
+                console.log('Stopping recording...');
+                isRecording = false;
+                audioBtn.textContent = '🎤';
+                audioBtn.style.setProperty('background', '#3b82f6', 'important');
+                audioBtn.style.setProperty('transform', 'scale(1)', 'important');
+                audioBtn.style.setProperty('box-shadow', 'none', 'important');
+                audioTime.style.color = '#6b7280';
+                audioTime.style.fontWeight = 'normal';
+                clearInterval(recordingInterval);
+                
+                console.log('Stopped recording simulation. Duration:', recordingTime, 'seconds');
+                
+                // Show recording saved message
+                if (recordingTime > 0) {
+                    alert(`🎤 Grabación guardada\n\nDuración: ${Math.floor(recordingTime / 60)}:${(recordingTime % 60).toString().padStart(2, '0')}`);
+                }
+            }
+        }
+
+        // Submit report function
+        function submitReport() {
+            const camera = document.getElementById('cameraSelect').value;
+            const location = document.getElementById('locationInput').value;
+            const description = document.getElementById('descriptionInput').value;
+            
+            if (!camera || camera === 'Seleccionar cámara') {
+                alert('Por favor selecciona una cámara.');
+                return;
+            }
+            
+            if (!location.trim()) {
+                alert('Por favor ingresa la ubicación del incidente.');
+                return;
+            }
+            
+            if (!description.trim()) {
+                alert('Por favor describe el incidente.');
+                return;
+            }
+            
+            const btn = document.getElementById('submitReportBtn');
+            const originalText = btn.textContent;
+            
+            btn.textContent = 'Enviando...';
+            btn.disabled = true;
+            btn.style.background = '#9ca3af';
+            
+            setTimeout(() => {
+                btn.textContent = '✓ Enviado';
+                btn.style.background = '#10b981';
+                
+                // Show success notification
+                alert('✅ Reporte enviado exitosamente\n\nTu reporte ha sido registrado y será revisado por el equipo de seguridad.');
+                
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                    btn.style.background = '#1e3a8a';
+                    
+                    // Clear form
+                    document.getElementById('cameraSelect').value = 'Seleccionar cámara';
+                    document.getElementById('locationInput').value = '';
+                    document.getElementById('descriptionInput').value = '';
+                    
+                    // Clear photos if available
+                    if (typeof selectedPhotos !== 'undefined') {
+                        selectedPhotos = [];
+                        if (typeof updatePhotoPreview === 'function') {
+                            updatePhotoPreview();
+                        }
+                    }
+                    
+                    // Reset audio recording state
+                    if (isRecording) {
+                        isRecording = false;
+                        clearInterval(recordingInterval);
+                    }
+                    const audioBtn = document.getElementById('recordBtn');
+                    const audioTime = document.getElementById('audioTime');
+                    if (audioBtn) {
+                        audioBtn.textContent = '🎤';
+                        audioBtn.style.setProperty('background', '#3b82f6', 'important');
+                        audioBtn.style.setProperty('transform', 'scale(1)', 'important');
+                        audioBtn.style.setProperty('box-shadow', 'none', 'important');
+                    }
+                    if (audioTime) {
+                        audioTime.textContent = '00:00';
+                        audioTime.style.color = '#6b7280';
+                        audioTime.style.fontWeight = 'normal';
+                    }
+                    
+                    showScreen('dashboard');
+                }, 1500);
+            }, 2000);
+        }
+
         // Make functions global immediately
         window.filterAlerts = filterAlerts;
         window.acknowledgeAlert = acknowledgeAlert;
         window.searchAlerts = searchAlerts;
         window.clearSearch = clearSearch;
+        window.toggleRecording = toggleRecording;
+        window.submitReport = submitReport;
         
         function handleLoginSimple() {
             console.log('Login function called');
