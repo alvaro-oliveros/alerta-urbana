@@ -310,6 +310,13 @@
                 margin-top: 40px;
                 padding: 12px 0 calc(30px + env(safe-area-inset-bottom));
             }
+            
+            /* Ensure grid layouts work in keyboard mode */
+            body.keyboard-open .quick-actions,
+            body.safari-keyboard .quick-actions {
+                display: grid !important;
+                grid-template-columns: 1fr 1fr !important;
+            }
         }
 
         .quick-actions {
@@ -317,6 +324,21 @@
             grid-template-columns: 1fr 1fr;
             gap: 15px;
             margin-bottom: 20px;
+        }
+
+        /* Ensure quick-actions stays 2x2 on mobile */
+        @media (max-width: 768px) {
+            .quick-actions {
+                display: grid !important;
+                grid-template-columns: 1fr 1fr !important;
+                gap: 15px;
+            }
+            
+            /* Safari-specific override */
+            body.safari-browser .quick-actions {
+                display: grid !important;
+                grid-template-columns: 1fr 1fr !important;
+            }
         }
 
         .action-card {
