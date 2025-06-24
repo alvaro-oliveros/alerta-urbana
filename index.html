@@ -964,6 +964,15 @@
             justify-content: center;
             cursor: pointer;
             font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .audio-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .audio-btn:active {
+            transform: scale(0.95);
         }
 
         .submit-btn {
@@ -3040,23 +3049,47 @@
             const audioBtn = document.getElementById('recordBtn');
             const audioTime = document.getElementById('audioTime');
             
+            if (!audioBtn || !audioTime) {
+                console.error('Audio elements not found');
+                return;
+            }
+            
             if (!isRecording) {
+                // Start recording
                 isRecording = true;
                 recordingTime = 0;
                 audioBtn.textContent = '⏹️';
                 audioBtn.style.background = '#ef4444';
+                audioBtn.style.transform = 'scale(1.1)';
+                audioBtn.style.boxShadow = '0 0 10px rgba(239, 68, 68, 0.5)';
+                
+                console.log('Started recording simulation');
                 
                 recordingInterval = setInterval(() => {
                     recordingTime++;
                     const minutes = Math.floor(recordingTime / 60);
                     const seconds = recordingTime % 60;
                     audioTime.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                    audioTime.style.color = '#ef4444';
+                    audioTime.style.fontWeight = 'bold';
                 }, 1000);
             } else {
+                // Stop recording
                 isRecording = false;
                 audioBtn.textContent = '🎤';
                 audioBtn.style.background = '#3b82f6';
+                audioBtn.style.transform = 'scale(1)';
+                audioBtn.style.boxShadow = 'none';
+                audioTime.style.color = '#6b7280';
+                audioTime.style.fontWeight = 'normal';
                 clearInterval(recordingInterval);
+                
+                console.log('Stopped recording simulation. Duration:', recordingTime, 'seconds');
+                
+                // Show recording saved message
+                if (recordingTime > 0) {
+                    alert(`🎤 Grabación guardada\n\nDuración: ${Math.floor(recordingTime / 60)}:${(recordingTime % 60).toString().padStart(2, '0')}`);
+                }
             }
         }
 
@@ -3092,6 +3125,9 @@
                 btn.textContent = '✓ Enviado';
                 btn.style.background = '#10b981';
                 
+                // Show success notification
+                alert('✅ Reporte enviado exitosamente\n\nTu reporte ha sido registrado y será revisado por el equipo de seguridad.');
+                
                 setTimeout(() => {
                     btn.textContent = originalText;
                     btn.disabled = false;
@@ -3105,6 +3141,17 @@
                     // Limpiar fotos seleccionadas
                     selectedPhotos = [];
                     updatePhotoPreview();
+                    
+                    // Reset audio recording state
+                    const audioBtn = document.getElementById('recordBtn');
+                    const audioTime = document.getElementById('audioTime');
+                    if (isRecording) {
+                        isRecording = false;
+                        clearInterval(recordingInterval);
+                    }
+                    audioBtn.textContent = '🎤';
+                    audioBtn.style.background = '#3b82f6';
+                    audioTime.textContent = '00:00';
                     
                     showScreen('dashboard');
                 }, 1500);
