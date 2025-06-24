@@ -22,6 +22,16 @@
             justify-content: center;
         }
 
+        /* Mobile-first responsive design */
+        @media (max-width: 768px) {
+            body {
+                padding: 0;
+                margin: 0;
+                height: 100vh;
+                overflow: hidden;
+            }
+        }
+
         .phone-container {
             width: 375px;
             height: 812px;
@@ -32,6 +42,17 @@
             position: relative;
         }
 
+        @media (max-width: 768px) {
+            .phone-container {
+                width: 100vw;
+                height: 100vh;
+                background: transparent;
+                border-radius: 0;
+                padding: 0;
+                box-shadow: none;
+            }
+        }
+
         .phone-screen {
             width: 100%;
             height: 100%;
@@ -39,6 +60,12 @@
             border-radius: 18px;
             overflow: hidden;
             position: relative;
+        }
+
+        @media (max-width: 768px) {
+            .phone-screen {
+                border-radius: 0;
+            }
         }
 
         .screen {
@@ -170,6 +197,12 @@
             padding: 20px;
             padding-bottom: 85px;
             overflow-y: auto;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                padding-bottom: calc(85px + env(safe-area-inset-bottom));
+            }
         }
 
         .quick-actions {
@@ -869,6 +902,17 @@
             border-bottom-right-radius: 12px;
             height: 65px;
             z-index: 100;
+        }
+
+        @media (max-width: 768px) {
+            .nav-tabs {
+                bottom: 0;
+                left: 0;
+                right: 0;
+                border-bottom-left-radius: 0;
+                border-bottom-right-radius: 0;
+                padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
+            }
         }
 
         .nav-tab {
