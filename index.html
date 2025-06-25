@@ -2549,11 +2549,14 @@
                         }
                     }
                     
-                    // Reset audio recording state
+                    // Reset audio recording state completely
                     if (isRecording) {
                         isRecording = false;
                         clearInterval(recordingInterval);
                     }
+                    // Reset recording time variable
+                    recordingTime = 0;
+                    
                     const audioBtn = document.getElementById('recordBtn');
                     const audioTime = document.getElementById('audioTime');
                     if (audioBtn) {
@@ -2567,6 +2570,8 @@
                         audioTime.style.color = '#6b7280';
                         audioTime.style.fontWeight = 'normal';
                     }
+                    
+                    console.log('Audio recording state fully reset after form submission');
                     
                     showScreen('dashboard');
                 }, 1500);
