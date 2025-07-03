@@ -9,7 +9,8 @@
       "Bash(npm i:*)",
       "Bash(rg:*)",
       "Bash(ls:*)",
-      "Bash(cp:*)"
+      "Bash(cp:*)",
+      "Bash(git checkout:*)"
     ],
     "deny": []
   }
