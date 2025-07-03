@@ -834,15 +834,19 @@
         }
 
         .camera-principal {
-            background: url('cameras/1.jpg') center/cover no-repeat;
+            background: url('cameras/4.jpeg') center/cover no-repeat;
         }
 
         .camera-lateral {
-            background: url('cameras/2.jpg') center/cover no-repeat;
+            background: url('cameras/5.jpeg') center/cover no-repeat;
         }
 
         .camera-residencial {
-            background: url('cameras/3.jpg') center/cover no-repeat;
+            background: url('cameras/6.jpeg') center/cover no-repeat;
+        }
+        
+        .camera-entrada {
+            background: url('cameras/7.jpeg') center/cover no-repeat;
         }
 
         .emergency-section {
@@ -1193,15 +1197,15 @@
         }
 
         .camera-expanded-principal {
-            background: url('cameras/1.jpg') center/cover no-repeat;
+            background: url('cameras/4.jpeg') center/cover no-repeat;
         }
 
         .camera-expanded-lateral {
-            background: url('cameras/2.jpg') center/cover no-repeat;
+            background: url('cameras/5.jpeg') center/cover no-repeat;
         }
 
         .camera-expanded-residencial {
-            background: url('cameras/3.jpg') center/cover no-repeat;
+            background: url('cameras/6.jpeg') center/cover no-repeat;
         }
 
         .quick-report-overlay {
@@ -1602,6 +1606,14 @@
                             </div>
                             <div class="camera-view camera-residencial"></div>
                         </div>
+
+                        <div class="camera-feed" onclick="expandCamera('entrada')">
+                            <div class="camera-header">
+                                <span>📹 Cámara Entrada</span>
+                                <span>🟢 En vivo</span>
+                            </div>
+                            <div class="camera-view camera-entrada"></div>
+                        </div>
                     </div>
 
                     <div class="stats-section">
@@ -1649,6 +1661,7 @@
                             <option>Cámara Principal - Entrada</option>
                             <option>Cámara Lateral - Parque</option>
                             <option>Cámara Residencial</option>
+                            <option>Cámara Entrada</option>
                         </select>
                     </div>
 
